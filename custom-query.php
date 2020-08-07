@@ -16,6 +16,8 @@
 define('CUSTOM_QUERY_PATH', __FILE__);
 define('CUSTOM_QUERY_TEMPLATE_PATH', path_join(plugin_dir_path(__FILE__), 'templates'));
 
-require('vendor/autoload.php');
+if (file_exists('vendor/autoload.php')) {
+    require('vendor/autoload.php');
+}
 require('includes/template.loader.php');
 require('includes/custom-query.php');
