@@ -64,12 +64,6 @@ class TestCustomQueryHandler extends WP_UnitTestCase {
         $actual = $query_handler->have_posts();
         $this->assertTrue($actual);
 
-        $actual = $query_handler->have_posts();
-        $this->assertTrue($actual);
-
-        $actual = $query_handler->have_posts();
-        $this->assertFalse($actual);
-
     }
 
     public function test_the_post() {
@@ -84,9 +78,6 @@ class TestCustomQueryHandler extends WP_UnitTestCase {
             )
         );
 
-        $actual = $query_handler->have_posts();
-        $this->assertTrue($actual);
-
         $query_handler->the_post();
         ob_start();
         the_title();
@@ -96,7 +87,7 @@ class TestCustomQueryHandler extends WP_UnitTestCase {
 
     }
 
-    public function test_the_post_before_loop() {
+    public function test_the_post_posts_consumed() {
 
         $query_handler = new CustomQueryHandler(
             $this->template_loader,
@@ -108,38 +99,8 @@ class TestCustomQueryHandler extends WP_UnitTestCase {
             )
         );
 
-        try {
-            $query_handler->the_post();
-            throw new Exception("Exception not raised");
-        }
-        catch (Exception $e) {
-            $actual = $e->getMessage();
-            $expected = "'the_post' may not be called outside loop";
-            $this->assertEquals($expected, $actual);
-        }
-
-    }
-
-    public function test_the_post_after_loop() {
-
-        $query_handler = new CustomQueryHandler(
-            $this->template_loader,
-            array(
-                'posts_per_page' => 2,
-                'post_status' => 'publish',
-                'orderby' => 'post_title',
-                'order' => 'asc'
-            )
-        );
-
-        $actual = $query_handler->have_posts();
-        $this->assertTrue($actual);
-
-        $actual = $query_handler->have_posts();
-        $this->assertTrue($actual);
-
-        $actual = $query_handler->have_posts();
-        $this->assertFalse($actual);
+        $query_handler->the_post();
+        $query_handler->the_post();
 
         try {
             $query_handler->the_post();
@@ -147,7 +108,7 @@ class TestCustomQueryHandler extends WP_UnitTestCase {
         }
         catch (Exception $e) {
             $actual = $e->getMessage();
-            $expected = "'the_post' may not be called outside loop";
+            $expected = "All posts consumed";
             $this->assertEquals($expected, $actual);
         }
 

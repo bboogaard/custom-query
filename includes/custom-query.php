@@ -41,22 +41,14 @@ class CustomQueryHandler {
         $query_args = $this->query_args;
         $query_args['paged'] = $this->page;
         $this->wp_query = new WP_Query($query_args);
+        $this->posts = $this->wp_query->get_posts();
+        $this->current_post = 0;
 
     }
 
     public function have_posts() {
 
-        if (!isset($this->posts)) {
-            $this->posts = $this->wp_query->get_posts();
-        }
-        if (!isset($this->current_post)) {
-            $this->current_post = 0;
-        }
-        else {
-            $this->current_post += 1;
-        }
-        $result = $this->current_post < count($this->posts);
-        return $result;
+        return $this->current_post < count($this->posts);
 
     }
 
@@ -64,11 +56,14 @@ class CustomQueryHandler {
 
         global $post;
 
-        if (!isset($this->current_post) || (isset($this->posts) && $this->current_post >= count($this->posts))) {
-            throw new Exception("'the_post' may not be called outside loop");
+        if ($this->current_post >= count($this->posts)) {
+            throw new Exception("All posts consumed");
         }
+
         $post = $this->posts[$this->current_post];
         setup_postdata($post);
+
+        $this->current_post += 1;
 
     }
 
