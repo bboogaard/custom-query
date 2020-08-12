@@ -448,6 +448,15 @@ class TestCustomQueryHandler extends WP_UnitTestCase {
             'query_page' => 2
         );
 
+        $post_ids = $this->post_ids;
+        $post_id = wp_insert_post(array(
+            'post_title' => '4. Sit',
+            'post_name' => 'sit',
+            'post_status' => 'publish',
+            'post_content' => 'Sit'
+        ));
+        array_push($post_ids, $post_id);
+
         $this->persistent_query->shouldReceive('load')->with($qid)
                                ->andReturn(array(
                                    'posts_per_page' => 2,
@@ -463,12 +472,12 @@ class TestCustomQueryHandler extends WP_UnitTestCase {
         );
 
         ob_start();
-        $query_handler->posts_navigation($this->post_ids[1]);
+        $query_handler->posts_navigation($post_ids[3]);
         $output = ob_get_clean();
 
         $prev_link = sprintf(
             'http://example.org/?p=%d&#038;query_page=%d&#038;qid=%s',
-            $this->post_ids[0],
+            $post_ids[2],
             2,
             $qid
         );

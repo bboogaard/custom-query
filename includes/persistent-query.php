@@ -113,20 +113,22 @@ class ArrayField extends QueryField {
 
 class PersistentQuery {
 
-    private $is_connected, $key_prefix, $qid, $query_fields, $redis, $redis_host,
-    $redis_port;
+    private $is_connected, $key_prefix, $qid, $query_fields, $redis, $redis_db,
+    $redis_host, $redis_port;
 
     public function __construct(Redis $redis,
                                 $query_fields,
                                 $key_prefix,
                                 $redis_host='127.0.0.1',
-                                $redis_port=6379) {
+                                $redis_port=6379,
+                                $redis_db=0) {
 
         $this->redis = $redis;
         $this->query_fields = $query_fields;
         $this->key_prefix = $key_prefix;
         $this->redis_host = $redis_host;
         $this->redis_port = $redis_port;
+        $this->redis_db = $redis_db;
 
         $this->is_connected = false;
 
@@ -164,6 +166,7 @@ class PersistentQuery {
         }
 
         $this->redis->connect($this->redis_host, $this->redis_port);
+        $this->redis->select($this->redis_db);
         $this->is_connected = true;
 
     }
@@ -226,7 +229,8 @@ class PersistentQueryFactory {
 
         $options = get_option('custom_query_options', array(
             'redis_host' => '127.0.0.1',
-            'redis_port' => 6379
+            'redis_port' => 6379,
+            'redis_db' => 0
         ));
 
         $redis = new Redis();
@@ -236,7 +240,8 @@ class PersistentQueryFactory {
             $query_fields,
             'cq:qid',
             $options['redis_host'],
-            $options['redis_port']
+            $options['redis_port'],
+            $options['redis_db']
         );
 
     }

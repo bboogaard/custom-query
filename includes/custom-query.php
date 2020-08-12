@@ -56,6 +56,7 @@ class CustomQueryHandler {
         if (isset($this->query[$this->navigation_args['query_var']])) {
             $this->saved_query = $this->query[$this->navigation_args['query_var']];
             if (false !== $query_args = $this->persistent_query->load($this->saved_query)) {
+                $query_args['paged'] = $this->page;
                 $this->wp_query = new WP_Query($query_args);
             }
             else {
