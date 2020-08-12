@@ -20,4 +20,6 @@ if (file_exists('vendor/autoload.php')) {
     require('vendor/autoload.php');
 }
 require('includes/template.loader.php');
+require('includes/uuid.php');
+require('includes/persistent-query.php');
 require('includes/custom-query.php');
