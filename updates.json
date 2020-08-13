@@ -1,0 +1,8 @@
+{
+    "name": "Custom Query",
+    "version": "1.1.0",
+    "download_url": "https://github.com/bboogaard/custom-query/archive/1.1.0.zip",
+    "sections": {
+        "description": "Rendering and paging for custom wp queries"
+    }
+}
