@@ -48,6 +48,7 @@ class TestPersistentQuery extends WP_UnitTestCase {
         );
 
         $this->redis->shouldReceive('connect')->times(1);
+        $this->redis->shouldReceive('select')->times(1);
         $this->redis->shouldReceive('hset')
                     ->andReturnUsing(function($key, $field, $value) use($query_fields, $meta_query) {
                         switch ($field) {
@@ -103,6 +104,7 @@ class TestPersistentQuery extends WP_UnitTestCase {
         );
 
         $this->redis->shouldReceive('connect')->times(1);
+        $this->redis->shouldReceive('select')->times(1);
         $this->redis->shouldReceive('hgetall')->andReturn($data);
 
         $actual = $persistent_query->load(UUID::v4());

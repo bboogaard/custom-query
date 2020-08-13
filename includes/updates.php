@@ -9,7 +9,7 @@ class UpdatesHandler {
     public function __construct() {
 
         Puc_v4_Factory::buildUpdateChecker(
-        	'https://bramboogaard.nl/repo/custom-query.json',
+        	'https://github.com/bboogaard/custom-query/blob/master/updates.json',
         	CUSTOM_QUERY_PATH,
         	'custom-query'
         );
@@ -20,7 +20,7 @@ class UpdatesHandler {
 
 class Updates {
 
-    public function register() {
+    public static function register() {
 
         $updates_handler = new UpdatesHandler();
 

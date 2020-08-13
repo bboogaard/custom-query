@@ -6,6 +6,10 @@ class Redis {
 
     }
 
+    public function select($db) {
+
+    }
+
     public function hset($hash, $field, $value) {
 
     }
