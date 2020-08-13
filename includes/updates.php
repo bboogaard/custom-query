@@ -20,7 +20,7 @@ class UpdatesHandler {
 
 class Updates {
 
-    public function register() {
+    public static function register() {
 
         $updates_handler = new UpdatesHandler();
 
