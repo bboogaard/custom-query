@@ -1,3 +1,10 @@
+1.1.1 (2020-08-13)
+------------------
+
+* Fix up updates json file location
+* Make updates register function static
+
+
 1.1.0 (2020-08-13)
 ------------------
 
