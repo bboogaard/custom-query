@@ -25,12 +25,14 @@ require('includes/template.loader.php');
 require('includes/uuid.php');
 require('includes/persistent-query.php');
 require('includes/custom-query.php');
+require('includes/query-sitemap.php');
 require('includes/updates.php');
 
 function custom_query_run() {
 
     CustomQuery\Settings::register();
     CustomQuery\Updates::register();
+    CustomQuery\QuerySitemaps::register();
 
 }
 
