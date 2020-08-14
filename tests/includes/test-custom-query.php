@@ -124,6 +124,28 @@ class TestCustomQueryHandler extends WP_UnitTestCase {
 
     }
 
+    public function test_get_pages() {
+
+        $query_handler = new CustomQueryHandler(
+            $this->template_loader,
+            $this->persistent_query,
+            array(
+                'posts_per_page' => 2,
+                'post_status' => 'publish',
+                'orderby' => 'post_title',
+                'order' => 'asc'
+            )
+        );
+
+        $actual = $query_handler->get_pages('http://mysite/');
+        $expected = array(
+            'http://mysite/',
+            'http://mysite/?query_page=2'
+        );
+        $this->assertEquals($expected, $actual);
+
+    }
+
     public function test_posts_pagination() {
 
         global $wp;

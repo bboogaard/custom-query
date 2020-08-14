@@ -113,6 +113,23 @@ class CustomQueryHandler {
 
     }
 
+    public function get_pages($base_url) {
+
+        $pages = array();
+        for ($i = 1; $i <= $this->wp_query->max_num_pages; $i++) {
+            if ($i == 1) {
+                array_push($pages, $base_url);
+            }
+            else {
+                array_push($pages, $this->join_url($base_url, array(
+                    $this->paging_args['page_var'] => $i
+                )));
+            }
+        }
+        return $pages;
+
+    }
+
     public function posts_pagination() {
 
         $page_links = $this->get_page_links();
@@ -314,6 +331,12 @@ class CustomQuery {
     public function the_post() {
 
         return $this->query_handler->the_post();
+
+    }
+
+    public function get_pages($base_url) {
+
+        return $this->query_handler->get_pages($base_url);
 
     }
 
