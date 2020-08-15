@@ -20,11 +20,14 @@ if (file_exists('vendor/autoload.php')) {
     require('vendor/autoload.php');
 }
 require('ext/plugin-update-checker/plugin-update-checker.php');
+require('wp/wp-rewrites.php');
+require('includes/lib/cache.php');
 require('includes/settings.php');
 require('includes/template.loader.php');
 require('includes/uuid.php');
 require('includes/persistent-query.php');
 require('includes/custom-query.php');
+require('includes/query-routes.php');
 require('includes/query-sitemap.php');
 require('includes/updates.php');
 
@@ -33,6 +36,7 @@ function custom_query_run() {
     CustomQuery\Settings::register();
     CustomQuery\Updates::register();
     CustomQuery\QuerySitemaps::register();
+    CustomQuery\QueryRoutes::register();
 
 }
 

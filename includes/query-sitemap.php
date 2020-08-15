@@ -28,34 +28,38 @@ class QuerySitemapEntity {
 
 class QuerySitemapHandler {
 
-    private $queries;
+    private $routes_handler;
 
     public function __construct() {
 
-        $this->queries = $this->parse_queries(
-            apply_filters('custom_query_sitemap_queries', array())
-        );
+        $this->routes_handler = QueryRoutes::create();
 
     }
 
-    private function parse_queries($queries) {
+    public function get_entities() {
 
         $result = array();
-        foreach ($queries as $_query) {
-            $query = new QuerySitemapEntity(
-                sanitize_title($_query['name']),
-                $_query['query'],
-                $_query['base_url']
+
+        $this->routes_handler->check_routes();
+
+        if ($this->routes_handler->default_query) {
+            $entity = new QuerySitemapEntity(
+                'main',
+                $this->routes_handler->default_query,
+                site_url()
             );
-            $result[$query->name] = $query;
+            $result['main'] = $entity;
+        }
+
+        foreach ($this->routes_handler->routes as $route) {
+            $entity = new QuerySitemapEntity(
+                sanitize_title($route->name),
+                $route->query,
+                site_url($route->name)
+            );
+            $result[$route->name] = $entity;
         }
         return $result;
-
-    }
-
-    public function get_queries() {
-
-        return $this->queries;
 
     }
 
@@ -63,17 +67,17 @@ class QuerySitemapHandler {
 
 class QuerySitemap {
 
-    public static function get_queries() {
+    public static function get_entities() {
 
-        static $queries;
+        static $entities;
 
-        if (isset($queries)) {
-            return $queries;
+        if (isset($entities)) {
+            return $entities;
         }
 
         $handler = new QuerySitemapHandler();
-        $queries = $handler->get_queries();
-        return $queries;
+        $entities = $handler->get_entities();
+        return $entities;
 
     }
 
@@ -87,23 +91,23 @@ class QuerySitemapProvider extends WP_Sitemaps_Provider {
 
     public function get_object_subtypes() {
 
-        $queries = QuerySitemap::get_queries();
-        return $queries;
+        $entities = QuerySitemap::get_entities();
+        return $entities;
 
 	}
 
     public function get_url_list( $page_num, $object_subtype = '' ) {
 
-        $queries = QuerySitemap::get_queries();
+        $entities = QuerySitemap::get_entities();;
 
-        if (!isset($queries[$object_subtype])) {
+        if (!isset($entities[$object_subtype])) {
             return array();
         }
 
-        $query = $queries[$object_subtype];
+        $entity = $entities[$object_subtype];
 
         $urls = array();
-        foreach ($query->get_pages() as $page) {
+        foreach ($entity->get_pages() as $page) {
             $sitemap_entry = array(
                 'loc' => $page,
             );

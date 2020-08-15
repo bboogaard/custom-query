@@ -284,9 +284,7 @@ class CustomQuery {
 
     private $query_handler;
 
-    public function __construct($query_args, $paging_args=array()) {
-
-        global $wp_custom_query;
+    public function __construct($query_args, $paging_args=array(), $navigation_args=array()) {
 
         $template_loader = TemplateLoaderFactory::create();
         $query_fields = array();
@@ -303,10 +301,9 @@ class CustomQuery {
         }
         $persistent_query = PersistentQueryFactory::create($query_fields);
         $this->query_handler = new CustomQueryHandler(
-            $template_loader, $persistent_query, $query_args, $paging_args
+            $template_loader, $persistent_query, $query_args, $paging_args,
+            $navigation_args
         );
-
-        $wp_custom_query = $this;
 
     }
 

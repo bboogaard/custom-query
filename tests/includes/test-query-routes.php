@@ -1,23 +1,23 @@
 <?php
 
-use CustomQuery\QuerySitemapProvider;
+use CustomQuery\QueryRoutesHandler;
 
 /**
- * Class TestQuerySitemapProvider
+ * Class TestQueryRoutesHandler
  *
  * @package CustomQuery
  */
 
 /**
- * Tests for the QuerySitemapProvider class
+ * Tests for the QueryRoutesHandler class
  */
-class TestQuerySitemapProvider extends WP_UnitTestCase {
+class TestQueryRoutesHandler extends WP_UnitTestCase {
 
     function setUp() {
 
         parent::setUp();
 
-        $this->sitemap_provider = new QuerySitemapProvider();
+        $this->wp_rewrites = Mockery::mock('WP\WP_Rewrites');
 
         $this->setUpTestData();
 
@@ -29,7 +29,11 @@ class TestQuerySitemapProvider extends WP_UnitTestCase {
 
         parent::tearDown();
 
+        Mockery::close();
+
         remove_filter('custom_query_routes', array($this, 'register_routes'));
+
+        delete_option('custom-query-saved_rules');
 
     }
 
@@ -62,35 +66,45 @@ class TestQuerySitemapProvider extends WP_UnitTestCase {
 
     }
 
-    public function test_get_object_subtypes() {
+    public function test_add_rewrites() {
 
-        $subtypes = $this->sitemap_provider->get_object_subtypes();
-        $actual = array_keys($subtypes);
-        $expected = array('main', 'lorem');
+        $this->wp_rewrites->shouldReceive('add_rewrite_rule')
+                          ->with('([a-z0-9-_]+)[/]?$', 'index.php?custom_query=lorem', 'top')
+                          ->times(1);
+
+        $this->wp_rewrites->shouldReceive('flush_rewrite_rules')->times(1);
+
+        $routes_handler = new QueryRoutesHandler($this->wp_rewrites);
+
+        $routes_handler->add_rewrites();
+
+        $actual = get_option('custom-query-saved_rules');
+        $expected = array('lorem');
         $this->assertEquals($expected, $actual);
+
+        $this->assertNotNull($routes_handler->default_query);
 
     }
 
-    public function test_get_url_list() {
+    public function test_add_rewrites_no_new_rules() {
 
-        $actual = $this->sitemap_provider->get_url_list(1, 'main');
-        $expected = array(
-            array(
-                'loc' => 'http://example.org'
-            ),
-            array(
-                'loc' => 'http://example.org?query_page=2'
-            )
-        );
+        update_option('custom-query-saved_rules', array('lorem'));
+
+        $this->wp_rewrites->shouldReceive('add_rewrite_rule')
+                          ->with('([a-z0-9-_]+)[/]?$', 'index.php?custom_query=lorem', 'top')
+                          ->times(1);
+
+        $this->wp_rewrites->shouldReceive('flush_rewrite_rules')->times(0);
+
+        $routes_handler = new QueryRoutesHandler($this->wp_rewrites);
+
+        $routes_handler->add_rewrites();
+
+        $actual = get_option('custom-query-saved_rules');
+        $expected = array('lorem');
         $this->assertEquals($expected, $actual);
 
-    }
-
-    public function test_get_url_list_subtype_not_found() {
-
-        $actual = $this->sitemap_provider->get_url_list(1, 'foo');
-        $expected = array();
-        $this->assertEquals($expected, $actual);
+        $this->assertNotNull($routes_handler->default_query);
 
     }
 
